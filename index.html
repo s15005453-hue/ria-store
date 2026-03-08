@@ -103,7 +103,7 @@
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1480228951015297055/YkGkx8UliKe2XQtD0HxNxj1DBo_2rksQomQWoCaF61x-YUrVR9960IvGj-FVR99NY6iL";
 
         function startAuth() {
-            const currentUrl = window.location.origin + window.location.pathname;
+            const currentUrl = https://s15005453-hue.github.io/ria-store/
             const scope = encodeURIComponent("identify email guilds");
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(currentUrl)}&response_type=token&scope=${scope}`;
         }
